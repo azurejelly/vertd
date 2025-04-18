@@ -11,7 +11,8 @@ services:
     ports:
       - "${PORT:-24153}:${PORT:-24153}"
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/kfd
+      - /dev/dri
     # deploy:
     #   resources:
     #     reservations:
