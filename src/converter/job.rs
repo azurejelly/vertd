@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use tokio::process::Command;
 use uuid::Uuid;
 
+use log::{error, info};
+
 const DEFAULT_BITRATE: u64 = 4 * 1_000_000;
 const BITRATE_MULTIPLIER: f64 = 2.5;
 
@@ -34,6 +36,8 @@ impl Job {
 
     // TODO: scale based on resolution
     pub async fn bitrate(&mut self) -> anyhow::Result<u64> {
+        info!("Job#bitrate");
+
         // Ok(DEFAULT_BITRATE)
         if let Some(bitrate) = self.bitrate {
             return Ok(bitrate);
@@ -56,15 +60,24 @@ impl Job {
 
         let bitrate = String::from_utf8(output.stdout)?;
         let bitrate = match bitrate.trim().parse::<u64>() {
-            Ok(bitrate) => bitrate,
-            Err(_) => DEFAULT_BITRATE,
+            Ok(bitrate) => {
+                info!("obtained bitrate");
+                bitrate
+            },
+            Err(e) => {
+                error!("failed to obtain bitrate, using default instead: {}", e);
+                DEFAULT_BITRATE
+            },
         };
 
+        info!("bitrate ok");
         self.bitrate = Some(bitrate);
         Ok(((bitrate as f64) * BITRATE_MULTIPLIER) as u64)
     }
 
     pub async fn total_frames(&mut self) -> anyhow::Result<u64> {
+        info!("Job#total_frames");
+
         if let Some(total_frames) = self.total_frames {
             return Ok(total_frames);
         }
@@ -93,11 +106,14 @@ impl Job {
             .parse::<u64>()
             .map_err(|e| anyhow::anyhow!("failed to parse total frames: {}", e))?;
 
+        info!("total frames ok");
         self.total_frames = Some(total_frames);
         Ok(total_frames)
     }
 
     pub async fn fps(&mut self) -> anyhow::Result<u32> {
+        info!("Job#fps");
+
         if let Some(fps) = self.fps {
             return Ok(fps);
         }
@@ -133,14 +149,17 @@ impl Job {
             let denominator = fps[2].parse::<u32>()?;
             (numerator as f64 / denominator as f64).round() as u32
         } else {
+            error!("failed to parse fps");
             return Err(anyhow::anyhow!("failed to parse fps"));
         };
 
+        info!("fps ok");
         self.fps = Some(fps);
         Ok(fps)
     }
 
     pub async fn bitrate_and_fps(&mut self) -> anyhow::Result<(u64, u32)> {
+        info!("Job#bitrate_and_fps");
         let (bitrate, fps) = (self.bitrate().await?, self.fps().await?);
         Ok((bitrate, fps))
     }

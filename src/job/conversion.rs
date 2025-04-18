@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use tokio::process::Command;
 use uuid::Uuid;
 
+use log::{error, info};
+
 const DEFAULT_BITRATE: u64 = 4 * 1_000_000;
 const BITRATE_MULTIPLIER: f64 = 2.5;
 
@@ -32,6 +34,8 @@ impl ConversionJob {
     }
     // TODO: scale based on resolution
     pub async fn bitrate(&mut self) -> anyhow::Result<u64> {
+        info!("Job#bitrate");
+
         // Ok(DEFAULT_BITRATE)
         if let Some(bitrate) = self.bitrate {
             return Ok(bitrate);
@@ -52,13 +56,23 @@ impl ConversionJob {
             .await?;
         let bitrate = String::from_utf8(output.stdout)?;
         let bitrate = match bitrate.trim().parse::<u64>() {
-            Ok(bitrate) => bitrate,
-            Err(_) => DEFAULT_BITRATE,
+            Ok(bitrate) => {
+                info!("obtained bitrate");
+                bitrate
+            },
+            Err(e) => {
+                error!("failed to obtain bitrate, using default instead: {}", e);
+                DEFAULT_BITRATE
+            },
         };
+        
+        info!("bitrate ok");
         self.bitrate = Some(bitrate);
         Ok(((bitrate as f64) * BITRATE_MULTIPLIER) as u64)
     }
     pub async fn total_frames(&mut self) -> anyhow::Result<u64> {
+        info!("Job#total_frames");
+
         if let Some(total_frames) = self.total_frames {
             return Ok(total_frames);
         }
@@ -77,8 +91,11 @@ impl ConversionJob {
             ])
             .output()
             .await?;
+
         let total_frames = String::from_utf8(output.stdout)?;
         let total_frames = total_frames.trim().parse::<u64>()?;
+        
+        info!("total frames ok");
         self.total_frames = Some(total_frames);
         Ok(total_frames)
     }

@@ -50,16 +50,20 @@ impl Converter {
         let gpu_args: &[&str] = match gpu {
             gpu::ConverterGPU::AMD => {
                 if env::consts::OS == "linux" {
+                    info!("detected GPU is from AMD and we're on Linux, using VAAPI for hwaccel");
                     &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"]
                 } else {
+                    info!("detected GPU is from AMD and we're NOT on Linux, using AMF for hwaccel");
                     &["-hwaccel", "amf"]
                 }
             },
             
             gpu::ConverterGPU::Intel => {
                 if env::consts::OS == "linux" {
+                    info!("detected GPU is from Intel and we're on Linux, using VAAPI for hwaccel");
                     &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"]
                 } else {
+                    info!("detected GPU is from Intel and we're NOT on Linux, using QSV for hwaccel");
                     &["-hwaccel", "qsv"]
                 }
             },
