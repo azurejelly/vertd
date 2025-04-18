@@ -10,10 +10,12 @@ services:
       - WEBHOOK_PINGS=${WEBHOOK_PINGS}
     ports:
       - "${PORT:-24153}:${PORT:-24153}"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu, video ]
+    devices:
+      - /dev/dri:/dev/dri
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [ gpu, video ]
