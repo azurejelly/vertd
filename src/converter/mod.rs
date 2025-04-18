@@ -123,6 +123,8 @@ impl Converter {
         tokio::spawn(async move {
             let mut lines = reader.lines();
             while let Ok(Some(out)) = lines.next_line().await {
+                info!("stdout: {}", out);
+
                 let mut map = HashMap::new();
                 for line in out.split("\n") {
                     if let Some((k, v)) = line.split_once("=") {
@@ -148,6 +150,7 @@ impl Converter {
             }
         });
 
+        info!("finished processing file");
         Ok(rx)
     }
 }
