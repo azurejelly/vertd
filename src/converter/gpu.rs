@@ -3,6 +3,7 @@ use log::warn;
 use std::fmt::{self, Display, Formatter};
 use tokio::process::Command;
 use wgpu::Instance;
+use std::env;
 
 pub enum ConverterGPU {
     AMD,
@@ -32,8 +33,20 @@ impl ConverterGPU {
 
     pub fn encoder_priority(&self) -> Vec<&str> {
         match self {
-            ConverterGPU::AMD => vec!["vaapi"],
-            ConverterGPU::Intel => vec!["qsv"],
+            ConverterGPU::AMD => {
+                if env::consts::OS == "linux" {
+                    vec!["vaapi"]
+                } else {
+                    vec!["amf"]
+                }
+            },
+            ConverterGPU::Intel => {
+                if env::consts::OS == "linux" {
+                    vec!["vaapi"]
+                } else {
+                    vec!["qsv"]
+                }
+            },
             ConverterGPU::NVIDIA => vec!["nvenc"],
             ConverterGPU::Apple => vec!["videotoolbox"],
         }
