@@ -32,7 +32,7 @@ impl ConverterGPU {
 
     pub fn encoder_priority(&self) -> Vec<&str> {
         match self {
-            ConverterGPU::AMD => vec!["amf"],
+            ConverterGPU::AMD => vec!["vaapi"],
             ConverterGPU::Intel => vec!["qsv"],
             ConverterGPU::NVIDIA => vec!["nvenc"],
             ConverterGPU::Apple => vec!["videotoolbox"],
