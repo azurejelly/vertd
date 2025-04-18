@@ -51,17 +51,17 @@ impl Converter {
             gpu::ConverterGPU::AMD => {
                 if env::consts::OS == "linux" {
                     &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"]
+                } else {
+                    &["-hwaccel", "amf"]
                 }
-                
-                &["-hwaccel", "amf"]
             },
             
             gpu::ConverterGPU::Intel => {
                 if env::consts::OS == "linux" {
                     &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"]
+                } else {
+                    &["-hwaccel", "qsv"]
                 }
-
-                &["-hwaccel", "qsv"]
             },
 
             gpu::ConverterGPU::NVIDIA => &["-hwaccel", "cuda"],
