@@ -12,6 +12,7 @@ WORKDIR /app
 
 ARG DEBIAN_FRONTEND="noninteractive"
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
+ENV XDG_RUNTIME_DIR=/tmp
 
 COPY --from=builder /build/target/release/vertd ./vertd
 
