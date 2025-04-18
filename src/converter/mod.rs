@@ -148,9 +148,10 @@ impl Converter {
                     }
                 }
             }
+
+            info!("stdout: reached EOF");
         });
 
-        info!("finished processing file");
         Ok(rx)
     }
 }
