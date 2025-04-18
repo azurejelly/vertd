@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
+use std::env;
 
 use anyhow::anyhow;
 use format::{Conversion, ConverterFormat};
@@ -47,8 +48,22 @@ impl Converter {
         let args = args.as_slice();
 
         let gpu_args: &[&str] = match gpu {
-            gpu::ConverterGPU::AMD => &["-hwaccel", "vaapi", "-vaapi_device", "/dev/dri/renderD128", "-hwaccel_output_format", "vaapi"],
-            gpu::ConverterGPU::Intel => &["-hwaccel", "qsv"],
+            gpu::ConverterGPU::AMD => {
+                if env::consts::OS == "linux" {
+                    &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"],
+                }
+                
+                &["-hwaccel", "amf"]
+            },
+            
+            gpu::ConverterGPU::Intel => {
+                if env::consts::OS == "linux" {
+                    &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"],
+                }
+
+                &["-hwaccel", "qsv"]
+            },
+
             gpu::ConverterGPU::NVIDIA => &["-hwaccel", "cuda"],
             gpu::ConverterGPU::Apple => &["-hwaccel", "videotoolbox"],
         };
