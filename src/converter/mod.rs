@@ -47,7 +47,7 @@ impl Converter {
         let args = args.as_slice();
 
         let gpu_args: &[&str] = match gpu {
-            gpu::ConverterGPU::AMD => &["-hwaccel", "amf"],
+            gpu::ConverterGPU::AMD => &["-hwaccel", "vaapi", "-vaapi_device", "/dev/dri/renderD128", "-hwaccel_output_format", "vaapi"],
             gpu::ConverterGPU::Intel => &["-hwaccel", "qsv"],
             gpu::ConverterGPU::NVIDIA => &["-hwaccel", "cuda"],
             gpu::ConverterGPU::Apple => &["-hwaccel", "videotoolbox"],
