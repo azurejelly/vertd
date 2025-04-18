@@ -50,7 +50,7 @@ impl Converter {
         let gpu_args: &[&str] = match gpu {
             gpu::ConverterGPU::AMD => {
                 if env::consts::OS == "linux" {
-                    &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"],
+                    &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"]
                 }
                 
                 &["-hwaccel", "amf"]
@@ -58,7 +58,7 @@ impl Converter {
             
             gpu::ConverterGPU::Intel => {
                 if env::consts::OS == "linux" {
-                    &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"],
+                    &["-hwaccel", "vaapi", "-hwaccel_output_format", "vaapi"]
                 }
 
                 &["-hwaccel", "qsv"]
