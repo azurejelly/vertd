@@ -79,6 +79,9 @@ pub async fn get_gpu() -> anyhow::Result<ConverterGPU> {
         0x106B | 0x0 => Ok(ConverterGPU::Apple),
         0x10005 if is_docker().await => {
             warn!("are you in a docker container? assuming NVIDIA, please open a PR and fix this if you're not.");
+            warn!("reported gpu info: {:?}", info);
+            warn!("vendor: 0x{:X}", info.vendor);
+
             Ok(ConverterGPU::NVIDIA)
         }
         _ => Err(anyhow!("unknown GPU vendor: 0x{:X}", info.vendor)),

@@ -1,7 +1,9 @@
 services:
   vertd:
-    build: .
-    image: vert-sh/vertd:latest
+    build:
+      context: .
+      dockerfile: cuda.Dockerfile
+    image: vert-sh/vertd:cuda-latest
     environment:
       - PORT=${PORT:-24153}
       - WEBHOOK_URL=${WEBHOOK_URL}
