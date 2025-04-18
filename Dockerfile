@@ -11,7 +11,7 @@ FROM nvidia/cuda:12.8.0-base-ubuntu24.04
 WORKDIR /app
 
 ARG DEBIAN_FRONTEND="noninteractive"
-ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
+
 ENV XDG_RUNTIME_DIR=/tmp
 
 COPY --from=builder /build/target/release/vertd ./vertd
@@ -19,7 +19,6 @@ COPY --from=builder /build/target/release/vertd ./vertd
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     mesa-va-drivers \
-    libva-utils \
     vulkan-tools
 
 RUN rm -rf \
