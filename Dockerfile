@@ -19,6 +19,7 @@ COPY --from=builder /build/target/release/vertd ./vertd
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     mesa-va-drivers \
+    intel-media-va-driver \
     vulkan-tools
 
 RUN rm -rf \
