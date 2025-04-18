@@ -8,11 +8,8 @@ RUN cargo build --release
 
 FROM nvidia/cuda:12.8.0-base-ubuntu24.04
 
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    pciutils \
-    vulkan-tools \
-    mesa-utils
+RUN apt-get update && \
+    apt-get install -y ffmpeg
 
 WORKDIR /app
 

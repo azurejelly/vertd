@@ -8,11 +8,8 @@ RUN cargo build --release
 
 FROM ubuntu:24.04
 
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    pciutils \
-    vulkan-tools \
-    mesa-utils
+RUN apt-get update && \
+    apt-get install -y ffmpeg
 
 WORKDIR /app
 
