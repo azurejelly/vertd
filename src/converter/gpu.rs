@@ -85,17 +85,36 @@ pub async fn get_gpu() -> anyhow::Result<ConverterGPU> {
     if info.name.contains("Apple") {
         return Ok(ConverterGPU::Apple);
     }
+
     match info.vendor {
         0x10DE => Ok(ConverterGPU::NVIDIA),
         0x1002 => Ok(ConverterGPU::AMD),
         0x8086 => Ok(ConverterGPU::Intel), // fun fact: intel's vendor id is 0x8086, presumably in reference to the intel 8086 processor
         0x106B | 0x0 => Ok(ConverterGPU::Apple),
-        0x10005 if is_docker().await => {
-            warn!("are you in a docker container? assuming NVIDIA, please open a PR and fix this if you're not.");
-            warn!("reported gpu info: {:?}", info);
-            warn!("vendor: 0x{:X}", info.vendor);
+        0x10005 => {
+            if is_docker().await {
+                warn!("*******");
+                warn!("you're running vertd on a docker container, but no GPU was detected.");
+                warn!("this usually is because you're running Docker under WSL or because");
+                warn!("you are not passing the GPU device correctly.");
+                warn!("");
+                warn!("if this doesn't seem right, create an issue and provide this info:");
+                warn!("- adapter name: {:#?}", info.name);
+                warn!("- adapter vendor: 0x{:X}", info.vendor);
+                warn!("- backend: {}", info.backend.to_str());
+                warn!("- device ID: {}", info.device);
+                warn!("- device type: {:#?}", info.device_type);
+                warn!("- driver: {}", info.driver);
+                warn!("- driver info: {}", info.driver_info);
+                warn!("");
+                warn!("vertd will assume you have a NVIDIA GPU. if this isn't the case,");
+                warn!("conversions will likely fail.");
+                warn!("*******");
 
-            Ok(ConverterGPU::NVIDIA)
+                Ok(ConverterGPU::NVIDIA)
+            } else {
+                Err(anyhow!("failed to find a GPU, device info: {:?}", info))
+            }
         }
         _ => Err(anyhow!("unknown GPU vendor: 0x{:X}", info.vendor)),
     }
