@@ -6,7 +6,7 @@ COPY . .
 
 RUN cargo build --release
 
-FROM nvidia/cuda:12.8.0-base-ubuntu24.04
+FROM nvidia/cuda:12.3.2-base-ubuntu22.04
 
 WORKDIR /app
 
